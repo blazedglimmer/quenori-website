@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# quenori.com
 
-## Getting Started
+The official website and brand system for Quenori, an independent product studio.
 
-First, run the development server:
+Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS 4. Every route is statically prerendered.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev           # http://localhost:3000
+npm run build
+npm run brand:export  # regenerate public/brand/*.svg and app/icon.svg from the glyph data
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | What |
+| --- | --- |
+| `lib/brand/glyphs.ts` | **The logo.** The seven letterforms as path data on a shared grid, plus the two stroke weights. Every logo rendering comes from this file. |
+| `lib/brand/svg.ts` | String SVG builders used by the asset export, OG image and app icons. |
+| `components/brand/` | `Wordmark` (primary / simplified, optional draw-on animation), `Mark` (compact q-tree), `Glyph` (single letter). |
+| `lib/products.ts` | Product ecosystem config. |
+| `lib/site.ts` | Site name, nav, contact email, social links. |
+| `components/sections/` | Hero, Products, Philosophy, About. |
+| `app/brand/` | Brand guidelines page (`/brand`). |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Adding a product
 
-## Learn More
+Add one entry to `lib/products.ts`. The product index, philosophy diagram, footer and JSON-LD pick it up automatically, and the thumbnail is generated from the product's slug and accent colour. Leave `tagline`, `description` and `category` as `null` until they are announced; the UI shows neutral placeholders instead.
 
-To learn more about Next.js, take a look at the following resources:
+## Changing the logo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Edit the paths in `lib/brand/glyphs.ts`, then run `npm run brand:export` so the downloadable SVGs and favicon match.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Before launch
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Confirm `contactEmail` in `lib/site.ts` (currently `hello@quenori.com`, unverified).
+- Add verified social URLs to `site.social` (the section stays hidden while it's empty).
+- Replace the placeholder Privacy Policy and Terms of Service pages.
+- Fill in Prices, Gameplay and AI Coding Agent details in `lib/products.ts`.
