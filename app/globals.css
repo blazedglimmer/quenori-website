@@ -1,26 +1,208 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   Quenori design tokens
+   Ink + Paper carry the identity. Lichen/Moss is the single accent
+   (the leaf). Product accents are muted earth tones, used only inside
+   product identities.
+------------------------------------------------------------------- */
+@theme {
+  --color-ink: #12130f;
+  --color-bark: #191a15;
+  --color-line: #2a2c24;
+  --color-stone: #8f8c80;
+  --color-mist: #c4c0b3;
+  --color-paper: #eeebe3;
+  --color-paper-deep: #e2ded2;
+  --color-soil: #5c5a51;
+  --color-lichen: #b8c98a;
+  --color-moss: #4f6b2f;
+
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --ease-grow: cubic-bezier(0.55, 0, 0.15, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-leaf: var(--color-lichen);
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-lichen);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--color-lichen);
+  outline-offset: 3px;
+}
+
+/* Light ("paper") sections swap the palette locally. */
+.on-paper {
+  --color-leaf: var(--color-moss);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  color-scheme: light;
+}
+.on-paper :focus-visible {
+  outline-color: var(--color-moss);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Display type — Fraunces, softened, high optical size.
+------------------------------------------------------------------- */
+.font-display {
+  font-variation-settings:
+    "SOFT" 50,
+    "WONK" 0,
+    "opsz" 144;
+  font-feature-settings: "ss01";
+}
+.font-display em,
+.font-display .wonk {
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1,
+    "opsz" 144;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------
+   Wordmark: draw-on (hero only)
+------------------------------------------------------------------- */
+.qn-leaf {
+  transform-origin: 0 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .qn-draw .qn-structure,
+  .qn-draw .qn-growth {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1;
+    animation: qn-stroke 1.5s var(--ease-grow) forwards;
+    animation-delay: calc(var(--i) * 120ms + 150ms);
+  }
+  .qn-draw .qn-growth {
+    animation-duration: 1.1s;
+    animation-delay: calc(var(--i) * 120ms + 1050ms);
+  }
+  .qn-draw .qn-leaf {
+    opacity: 0;
+    animation:
+      qn-leaf-in 1.2s var(--ease-grow) 1.9s forwards,
+      qn-sway 7s ease-in-out 3.1s infinite;
+  }
+}
+
+@keyframes qn-stroke {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes qn-leaf-in {
+  from {
+    opacity: 0;
+    transform: scale(0.15) rotate(-24deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes qn-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Scroll reveal (progressive: only hides content when JS can run)
+------------------------------------------------------------------- */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal="pending"] {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  [data-reveal] {
+    transition:
+      opacity 0.9s var(--ease-grow),
+      transform 0.9s var(--ease-grow);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Branch lines draw in when their section is revealed. */
+  [data-reveal] .grow-line {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.8s var(--ease-grow);
+    transition-delay: calc(var(--d, 0) * 1ms + 200ms);
+  }
+  [data-reveal="shown"] .grow-line {
+    stroke-dashoffset: 0;
+  }
+  [data-reveal] .grow-node {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    transition-delay: calc(var(--d, 0) * 1ms + 1100ms);
+  }
+  [data-reveal="shown"] .grow-node {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Product thumbnails: branches extend on hover / focus.
+------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .thumb-twig {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+  }
+  .product-row:hover .thumb-twig,
+  .product-row:focus-within .thumb-twig {
+    animation: qn-stroke 1.1s var(--ease-grow) both;
+  }
 }
