@@ -6,14 +6,15 @@ import { Mark } from '@/components/brand/Mark';
 import { Wordmark } from '@/components/brand/Wordmark';
 import { Reveal } from '@/components/ui/Reveal';
 import { glyphs, STROKE } from '@/lib/brand/glyphs';
+import { pageMetadata } from '@/lib/metadata';
 import { products } from '@/lib/products';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: '/brand',
   title: 'Brand',
   description:
     'The Quenori identity: seven nature-grown letterforms, the logo suite, colour, typography and usage.',
-  alternates: { canonical: '/brand' },
-};
+});
 
 const colors = [
   {

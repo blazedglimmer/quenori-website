@@ -1,6 +1,11 @@
 export const site = {
   name: "Quenori",
-  url: "https://quenori.com",
+  /**
+   * Canonical origin. Every absolute URL (canonical, Open Graph, sitemap,
+   * robots, JSON-LD) is built from this. The bare quenori.com 308-redirects
+   * here at the Vercel domain level.
+   */
+  url: "https://www.quenori.com",
   tagline: "Ideas grow into products.",
   description:
     "An independent product studio building digital experiences, useful tools and technology for the future.",
