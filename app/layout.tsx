@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono, Newsreader } from "next/font/google";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { site } from "@/lib/site";
@@ -10,6 +10,14 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   axes: ["SOFT", "WONK", "opsz"],
   style: ["normal", "italic"],
+});
+
+/** Lifvara's own display face, used only inside its product panel. */
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  weight: ["500"],
+  preload: false,
 });
 
 const geistSans = Geist({
@@ -55,7 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={`${fraunces.variable} ${newsreader.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <body className="flex min-h-dvh flex-col">
         <a

@@ -3,14 +3,7 @@
  * script, the Open Graph image and the app icons, so every rendering of the
  * logo comes from the same glyph data as the React components.
  */
-import {
-  glyphs,
-  layoutGlyphs,
-  MARK,
-  STROKE,
-  STROKE_SIMPLIFIED,
-  wordmarkViewBox,
-} from "./glyphs.ts";
+import { glyphs, layoutGlyphs, MARK, strokeWidth, wordmarkViewBox, type Glyph } from "./glyphs.ts";
 
 export const BRAND_COLORS = {
   ink: "#12130f",
@@ -42,7 +35,7 @@ export function wordmarkSvg({
         .filter((s) => !(simplified && s.detail))
         .map(
           (s) =>
-            `<path d="${s.d}" stroke-width="${simplified ? STROKE_SIMPLIFIED : STROKE[s.weight]}"/>`,
+            `<path d="${s.d}" stroke-width="${strokeWidth(s, simplified)}"/>`,
         )
         .join("");
       const fills = (glyph.fills ?? [])
@@ -54,21 +47,20 @@ export function wordmarkSvg({
       return `<g transform="translate(${gx} 0)">${strokes}${fills}</g>`;
     })
     .join("");
-  const bg = background ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${background}"/>` : "";
+  const bg = background ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${background}" stroke="none"/>` : "";
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${w}" height="${h}" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round"><title>Quenori</title>${bg}${body}</svg>`;
 }
 
 export function markSvg({
   color = BRAND_COLORS.paper as string,
   background = BRAND_COLORS.ink as string | null,
-  radius = 22,
+  radius = 30,
 }: { color?: string; background?: string | null; radius?: number } = {}) {
-  const tree = glyphs[0];
   const [x, y, w, h] = MARK.viewBox.split(" ");
   const bg = background
-    ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${radius}" fill="${background}"/>`
+    ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${radius}" fill="${background}" stroke="none"/>`
     : "";
-  const paths = tree.strokes
+  const paths = MARK.strokes
     .map(
       (s) =>
         `<path d="${s.d}" stroke-width="${s.weight === "growth" ? MARK.growth : MARK.structure}"/>`,
@@ -79,4 +71,20 @@ export function markSvg({
 
 export function svgDataUri(svg: string) {
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+}
+
+/** A single letterform as a standalone SVG (for the letter illustration set). */
+export function letterSvg(
+  char: string,
+  { color = BRAND_COLORS.paper as string, leaf }: { color?: string; leaf?: string } = {},
+) {
+  leaf ??= color;
+  const glyph = glyphs.find((g) => g.char === char) as Glyph;
+  const width = 150;
+  const tx = -16 + (width - glyph.advance) / 2;
+  const strokes = glyph.strokes.map((s) => `<path d="${s.d}" stroke-width="${strokeWidth(s)}"/>`).join("");
+  const fills = (glyph.fills ?? [])
+    .map((f) => `<path d="${f.d}" transform="translate(${f.at[0]} ${f.at[1]}) rotate(${f.rotate})" fill="${leaf}" fill-rule="evenodd" stroke="none"/>`)
+    .join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16 -56 ${width} 212" width="${width}" height="212" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round"><title>${glyph.char} — ${glyph.nature}</title><g transform="translate(${tx} 0)">${strokes}${fills}</g></svg>`;
 }

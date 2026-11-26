@@ -1,10 +1,4 @@
-import {
-  layoutGlyphs,
-  STROKE,
-  STROKE_SIMPLIFIED,
-  wordmarkViewBox,
-  type Glyph,
-} from "@/lib/brand/glyphs";
+import { layoutGlyphs, strokeWidth, wordmarkViewBox, type Glyph } from "@/lib/brand/glyphs";
 
 type WordmarkProps = {
   /** primary: full illustrated detail. simplified: structure only, heavier stroke. */
@@ -84,7 +78,7 @@ export function GlyphPaths({
             d={s.d}
             pathLength={1}
             className={s.weight === "growth" ? "qn-growth" : "qn-structure"}
-            strokeWidth={(simplified ? STROKE_SIMPLIFIED : STROKE[s.weight]) * strokeScale}
+            strokeWidth={strokeWidth(s, simplified) * strokeScale}
           />
         ))}
       {glyph.fills?.map((f, i) => (

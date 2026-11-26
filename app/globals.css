@@ -3,8 +3,8 @@
 /* ------------------------------------------------------------------
    Quenori design tokens
    Ink + Paper carry the identity. Lichen/Moss is the single accent
-   (the leaf). Product accents are muted earth tones, used only inside
-   product identities.
+   (the leaf). Products keep their own identities; Quenori never
+   recolours them.
 ------------------------------------------------------------------- */
 @theme {
   --color-ink: #12130f;
@@ -190,19 +190,5 @@ body {
   }
   [data-reveal="shown"] .grow-node {
     opacity: 1;
-  }
-}
-
-/* ------------------------------------------------------------------
-   Product thumbnails: branches extend on hover / focus.
-------------------------------------------------------------------- */
-@media (prefers-reduced-motion: no-preference) {
-  .thumb-twig {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 0;
-  }
-  .product-row:hover .thumb-twig,
-  .product-row:focus-within .thumb-twig {
-    animation: qn-stroke 1.1s var(--ease-grow) both;
   }
 }

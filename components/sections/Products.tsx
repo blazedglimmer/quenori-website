@@ -1,128 +1,176 @@
-import { ProductThumb } from "@/components/products/ProductThumb";
+import Image from "next/image";
 import { Reveal } from "@/components/ui/Reveal";
-import { productHost, products, statusLabel, type Product } from "@/lib/products";
+import {
+  liveProducts,
+  productHost,
+  statusLabel,
+  upcomingProducts,
+  type Product,
+} from "@/lib/products";
 import { SectionHeading } from "./SectionHeading";
+
+/** CSS font stacks for product display faces loaded in app/layout.tsx. */
+const productFonts = {
+  newsreader: "var(--font-newsreader), Georgia, serif",
+} as const;
 
 export function Products() {
   return (
-    <section
-      id="products"
-      aria-labelledby="products-title"
-      className="scroll-mt-16 border-t border-line"
-    >
-      <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
+    <section id="products" aria-labelledby="products-title" className="scroll-mt-16 border-t border-line">
+      <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32">
         <Reveal>
           <SectionHeading
-            index="01"
             label="Products"
             id="products-title"
             title={
               <>
-                Independent products, <em>grown</em> from the same roots.
+                Independent products, each with <em>a life of its own.</em>
               </>
             }
             aside={
               <p>
-                Each product has its own name, its own home and its own reason to exist. New ones
-                are planted here as they take shape.
+                Every product has its own name, identity and home. Quenori is where they start; what
+                they become is up to the people who use them.
               </p>
             }
           />
         </Reveal>
 
-        <ol className="mt-16 border-t border-line sm:mt-20">
-          {products.map((product, i) => (
-            <Reveal as="li" key={product.slug} delay={i * 80} className="border-b border-line">
-              <ProductRow product={product} index={i} />
+        <div className="mt-14 grid gap-10 sm:mt-20">
+          {liveProducts.map((product) => (
+            <Reveal key={product.slug}>
+              <FeaturedProduct product={product} />
             </Reveal>
           ))}
-        </ol>
+        </div>
+
+        {upcomingProducts.length > 0 && (
+          <Reveal className="mt-16 sm:mt-20">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-line pb-4">
+              <h3 className="eyebrow text-mist">In development</h3>
+              <p className="text-sm text-stone">Details will be published as each one launches.</p>
+            </div>
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-3">
+              {upcomingProducts.map((p) => (
+                <UpcomingProduct key={p.slug} product={p} />
+              ))}
+            </ul>
+          </Reveal>
+        )}
       </div>
     </section>
   );
 }
 
-function ProductRow({ product, index }: { product: Product; index: number }) {
-  const live = product.status === "live";
+function FeaturedProduct({ product }: { product: Product }) {
+  const identity = product.identity;
+  const titleId = `product-${product.slug}`;
 
   return (
     <article
-      aria-labelledby={`product-${product.slug}`}
-      className="product-row group relative grid grid-cols-[88px_1fr] gap-x-5 gap-y-4 py-8 sm:grid-cols-[120px_1fr] sm:gap-x-8 lg:grid-cols-[3rem_150px_minmax(0,1.3fr)_minmax(0,1fr)_10rem] lg:items-start lg:gap-x-10 lg:py-10"
+      aria-labelledby={titleId}
+      className="group grid overflow-hidden border border-line lg:grid-cols-12"
     >
-      <span className="eyebrow hidden pt-1 text-stone lg:block">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-
-      <div className="row-span-2 self-start overflow-hidden border border-line transition-colors group-hover:border-stone lg:row-span-1">
-        <ProductThumb product={product} className="block aspect-square w-full" />
-      </div>
-
-      <div>
-        <h3
-          id={`product-${product.slug}`}
-          className="font-display text-3xl font-light leading-tight sm:text-4xl"
+      {/* The product, in its own identity. Quenori provides only the frame. */}
+      {identity ? (
+        <div
+          className="relative flex flex-col overflow-hidden lg:col-span-8"
+          style={{ background: identity.background, color: identity.foreground }}
         >
-          {live ? (
-            <a
-              href={product.url}
-              className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+          <div className="flex items-center gap-3 px-6 pt-6 sm:px-10 sm:pt-9">
+            <Image src={identity.mark} alt="" width={28} height={28} className="size-7" unoptimized />
+            <span
+              className="text-[1.375rem] leading-none font-medium"
+              style={{ fontFamily: identity.displayFont ? productFonts[identity.displayFont] : undefined }}
             >
               {product.name}
-            </a>
-          ) : (
-            product.name
-          )}
-        </h3>
-        <p className="mt-2 text-base text-mist">
-          {product.tagline ?? <span className="text-stone">Details to be announced.</span>}
-        </p>
-      </div>
-
-      <div className="col-start-2 lg:col-start-auto">
-        {product.description && (
-          <p className="max-w-md text-sm leading-relaxed text-stone">{product.description}</p>
-        )}
-        <dl
-          className={`eyebrow flex flex-wrap gap-x-6 gap-y-2 text-[0.6875rem] text-stone ${product.description ? "mt-4 lg:mt-5" : "lg:pt-2"}`}
-        >
-          <div className="flex gap-2">
-            <dt className="sr-only">Category</dt>
-            <dd>{product.category ?? "Category — TBA"}</dd>
-          </div>
-          <div className="flex gap-2 lg:hidden">
-            <dt className="sr-only">Status</dt>
-            <dd>
-              <Status product={product} />
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <div className="col-start-2 hidden flex-col items-end gap-3 text-right lg:col-start-auto lg:flex">
-        <Status product={product} />
-        <span
-          className={`text-sm ${live ? "text-mist transition-colors group-hover:text-paper" : "text-stone/70"}`}
-        >
-          {productHost(product)}
-          {live && (
-            <span
-              aria-hidden
-              className="ml-2 inline-block transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            >
-              ↗
             </span>
+          </div>
+          {product.tagline && (
+            <p
+              className="mt-8 px-6 text-[clamp(2rem,4.2vw,3.5rem)] leading-[1.02] font-medium tracking-[-0.02em] text-balance sm:px-10"
+              style={{ fontFamily: identity.displayFont ? productFonts[identity.displayFont] : undefined }}
+            >
+              {product.tagline}
+            </p>
           )}
-        </span>
-      </div>
+          {identity.preview && (
+            <div
+              className="mt-8 ml-6 flex-1 overflow-hidden rounded-tl-xl border-t border-l sm:mt-10 sm:ml-10"
+              style={{ borderColor: `color-mix(in srgb, ${identity.foreground} 12%, transparent)` }}
+            >
+              <Image
+                src={identity.preview.src}
+                alt={identity.preview.alt}
+                width={identity.preview.width}
+                height={identity.preview.height}
+                sizes="(min-width: 1024px) 60vw, 160vw"
+                className="h-auto w-[160%] max-w-none transition-transform duration-700 ease-[var(--ease-grow)] group-hover:-translate-y-1.5 motion-reduce:transition-none sm:w-full"
+              />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex flex-col justify-end bg-bark p-6 sm:p-10 lg:col-span-8">
+          <p className="font-display text-[clamp(2rem,4.2vw,3.5rem)] leading-[1.02] font-light">
+            {product.tagline ?? product.name}
+          </p>
+        </div>
+      )}
 
-      {/* Accent hairline that grows along the row on hover. */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -bottom-px left-0 h-px w-full origin-left scale-x-0 transition-transform duration-700 ease-[var(--ease-grow)] group-hover:scale-x-100 motion-reduce:transition-none"
-        style={{ background: product.accent }}
-      />
+      {/* Quenori's frame: the same for every product. */}
+      <div className="flex flex-col gap-8 bg-ink p-6 sm:p-10 lg:col-span-4">
+        <div className="flex items-center justify-between gap-4">
+          <Status product={product} />
+          {product.category && (
+            <span className="eyebrow text-[0.6875rem] text-stone">{product.category}</span>
+          )}
+        </div>
+        <div>
+          <h3 id={titleId} className="font-display text-4xl font-light">
+            {product.name}
+          </h3>
+          {product.description && (
+            <p className="mt-4 leading-relaxed text-mist">{product.description}</p>
+          )}
+        </div>
+        {product.highlights && (
+          <ul aria-label={`What ${product.name} covers`} className="flex flex-wrap gap-2">
+            {product.highlights.map((h) => (
+              <li key={h} className="border border-line px-3 py-1.5 text-sm text-mist">
+                {h}
+              </li>
+            ))}
+          </ul>
+        )}
+        <a
+          href={product.url}
+          className="mt-auto inline-flex items-center justify-between gap-4 border-t border-line pt-6 text-paper transition-colors hover:text-lichen"
+        >
+          <span>
+            Visit {product.name}
+            <span className="block text-sm text-stone">{productHost(product)}</span>
+          </span>
+          <span aria-hidden className="text-xl transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+            ↗
+          </span>
+        </a>
+      </div>
     </article>
+  );
+}
+
+function UpcomingProduct({ product }: { product: Product }) {
+  return (
+    <li className="flex flex-col gap-3 border-b border-line py-7 sm:px-7 sm:[&:nth-child(2n+1)]:pl-0 lg:[&:nth-child(2n+1)]:pl-7 lg:[&:nth-child(3n+1)]:pl-0">
+      <p className="font-display text-2xl font-light text-mist">{product.name}</p>
+      <p className="text-sm text-stone">{product.tagline ?? product.category ?? "Details to be announced"}</p>
+      <p className="mt-auto flex items-center gap-2 pt-2 text-sm text-stone/80">
+        <span aria-hidden className="inline-block size-1.5 rounded-full border border-stone" />
+        <span className="sr-only">{statusLabel[product.status]}: </span>
+        {productHost(product)}
+      </p>
+    </li>
   );
 }
 

@@ -73,6 +73,18 @@ const downloads = [
   ['Mark — monochrome', '/brand/quenori-mark-mono-black.svg'],
 ];
 
+const faviconDownloads = [16, 32, 48, 64, 128].map(size => [
+  `${size}px`,
+  `/brand/favicon/quenori-icon-${size}.png`,
+  `/brand/favicon/quenori-icon-${size}.svg`,
+]);
+
+const letterDownloads = glyphs.map(g => [
+  `${g.char} — ${g.nature}`,
+  `/brand/letters/${g.char}-dark.svg`,
+  `/brand/letters/${g.char}-light.svg`,
+]);
+
 export default function BrandPage() {
   return (
     <div className="mx-auto max-w-360 px-5 sm:px-8 lg:px-12">
@@ -116,24 +128,23 @@ export default function BrandPage() {
               hand-drawn, a little irregular.
             </p>
             <p>
-              Three directions were considered.{' '}
-              <strong className="font-medium text-paper">Illustrative</strong>{' '}
-              drew each motif in full beside its letter. It was charming but
-              read as a children&apos;s book.{' '}
-              <strong className="font-medium text-paper">Solid stencil</strong>{' '}
-              carved the motifs out of heavy filled letters. It was strong, but
-              the nature turned into decoration.{' '}
-              <strong className="font-medium text-paper">
-                Monoline growth
-              </strong>
-              , the chosen direction, keeps each letter a single confident
-              stroke and lets one fine detail grow out of it.
+              Three directions were drawn and compared.{' '}
+              <strong className="font-medium text-paper">Uppercase, hand-drawn</strong>{' '}
+              stayed closest to the sketch and every motif read instantly, but
+              it drifted into storybook territory.{' '}
+              <strong className="font-medium text-paper">Refined hybrid</strong>{' '}
+              set fine botanical line work on high-contrast capitals; it looked
+              serious, but the nature became ornament on a font.{' '}
+              <strong className="font-medium text-paper">Lowercase monoline</strong>{' '}
+              kept every letter a single stroke with room above and below for
+              nature to grow, and was chosen.
             </p>
             <p>
-              The result keeps the sketch&apos;s handmade character through
-              deliberate irregularities: a canopy with a cleft, a slightly bent
-              branch, an eccentric ring. Every letter still reads first as a
-              letter.
+              The final wordmark takes the sketch&apos;s strongest gesture back
+              into that system: the lobed crown of the tree. It rises above the
+              other letters, so the q stands as the word&apos;s capital. The rest
+              stay deliberately quieter, with weights that vary slightly from
+              stroke to stroke, as they would when drawn by hand.
             </p>
           </div>
         </div>
@@ -145,7 +156,7 @@ export default function BrandPage() {
           <div className="space-y-5 leading-relaxed text-mist lg:col-span-4">
             <p>
               All seven letters share one grid: an x-height of 100 units, an
-              ascender zone the canopy, wing and leaf may reach into, and a
+              ascender zone the crown, wing and leaf may reach into, and a
               descender used only by the roots of the q.
             </p>
             <p>The system has exactly two weights:</p>
@@ -219,6 +230,26 @@ export default function BrandPage() {
 
       {/* 04 Logo suite */}
       <Section index="04" title="Logo suite">
+        <div className="mb-10 grid gap-px border border-line bg-line md:grid-cols-2">
+          <div className="flex flex-col gap-6 bg-ink p-8 sm:p-10">
+            <p className="eyebrow text-stone">Primary asset A · Wordmark</p>
+            <Wordmark className="h-auto w-full max-w-md text-paper" />
+            <ul className="list-disc space-y-2 pl-5 text-mist">
+              <li>The default. Use it wherever the name has room to be read: the website, Open Graph images, documents, presentations, signage.</li>
+              <li>Full detail from 160px wide; the simplified version from 72px to 160px (navigation, email signatures).</li>
+              <li>Below 72px wide, switch to the symbol.</li>
+            </ul>
+          </div>
+          <div className="flex flex-col gap-6 bg-ink p-8 sm:p-10">
+            <p className="eyebrow text-stone">Primary asset B · Symbol</p>
+            <Mark tile className="size-24" />
+            <ul className="list-disc space-y-2 pl-5 text-mist">
+              <li>The crowned tree-q on its own. Use it where space is square or very small: favicons, app icons, social avatars, product footers (“from Quenori”), loading states.</li>
+              <li>It stands alone: never place it directly beside the wordmark, which already contains it.</li>
+              <li>At 16–32px use the pixel-tuned favicon files, never a scaled-down large mark.</li>
+            </ul>
+          </div>
+        </div>
         <div className="grid gap-px border border-line bg-line md:grid-cols-2">
           <Tile
             label="Primary wordmark"
@@ -259,17 +290,27 @@ export default function BrandPage() {
             <Wordmark accentLeaf={false} className="h-auto w-full" />
           </Tile>
           <Tile
-            label="Compact mark"
-            note="The q as a tree: canopy, trunk and roots. Favicon, app icon, avatar."
+            label="Symbol and favicons"
+            note="Pixel-tuned files, shown at native size: 128, 64, 48, 32 and 16px. 16 and 32 use their own simpler drawing."
             className="bg-bark md:col-span-2"
           >
-            <div className="flex flex-wrap items-end justify-center gap-8 sm:gap-12">
-              <Mark tile className="size-40" />
-              <Mark className="size-28 text-paper" />
-              <Mark tile className="size-16" />
-              <Mark tile className="size-8" />
-              <Mark tile className="size-4" />
-              <div className="on-paper p-4">
+            <div className="flex w-full flex-wrap items-end justify-center gap-6 sm:gap-10">
+              {[128, 64, 48, 32, 16].map(size => (
+                <figure key={size} className="flex flex-col items-center gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- shown at exact native pixels */}
+                  <img
+                    src={`/brand/favicon/quenori-icon-${size}.png`}
+                    width={size}
+                    height={size}
+                    alt={`Quenori symbol, ${size}px`}
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                  <figcaption className="eyebrow text-[0.625rem] text-stone">
+                    {size}
+                  </figcaption>
+                </figure>
+              ))}
+              <div className="on-paper flex items-center gap-4 p-4">
                 <Mark className="size-16 text-ink" />
               </div>
             </div>
@@ -293,6 +334,40 @@ export default function BrandPage() {
                     ↓
                   </span>
                   {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <h3 className="eyebrow text-stone lg:col-span-3">Favicons</h3>
+          <ul className="grid gap-x-8 gap-y-3 text-mist sm:grid-cols-2 lg:col-span-9 lg:grid-cols-3">
+            {faviconDownloads.map(([label, pngHref, svgHref]) => (
+              <li key={pngHref} className="flex gap-3">
+                <span>{label}</span>
+                <a href={pngHref} download className="text-stone underline decoration-line underline-offset-4 hover:text-paper">
+                  png
+                </a>
+                <a href={svgHref} download className="text-stone underline decoration-line underline-offset-4 hover:text-paper">
+                  svg
+                </a>
+              </li>
+            ))}
+            <li className="flex gap-3">
+              <span>favicon.ico</span>
+              <a href="/favicon.ico" download className="text-stone underline decoration-line underline-offset-4 hover:text-paper">
+                16 · 32 · 48
+              </a>
+            </li>
+          </ul>
+          <h3 className="eyebrow text-stone lg:col-span-3">Letters (SVG)</h3>
+          <ul className="grid gap-x-8 gap-y-3 text-mist sm:grid-cols-2 lg:col-span-9 lg:grid-cols-3">
+            {letterDownloads.map(([label, dark, light]) => (
+              <li key={dark} className="flex gap-3">
+                <span>{label}</span>
+                <a href={dark} download className="text-stone underline decoration-line underline-offset-4 hover:text-paper">
+                  dark
+                </a>
+                <a href={light} download className="text-stone underline decoration-line underline-offset-4 hover:text-paper">
+                  light
                 </a>
               </li>
             ))}
@@ -347,8 +422,7 @@ export default function BrandPage() {
         <p className="max-w-2xl leading-relaxed text-mist">
           A restrained palette of near-black and warm paper, with a single
           living accent. Colour is spent sparingly, mostly on the leaf. Products
-          carry their own muted earth tones, used only inside their own
-          identities.
+          keep their own colours.
         </p>
         <ul className="mt-10 grid grid-cols-2 gap-px border border-line bg-line sm:grid-cols-4">
           {colors.map(c => (
@@ -362,22 +436,41 @@ export default function BrandPage() {
             </li>
           ))}
         </ul>
-        <ul className="mt-px grid grid-cols-2 gap-px border border-t-0 border-line bg-line sm:grid-cols-4">
-          {products.map(p => (
-            <li key={p.slug} className="flex items-center gap-4 bg-ink p-5">
-              <span
-                className="size-8 shrink-0"
-                style={{ background: p.accent }}
-              />
-              <span>
-                <span className="block text-sm">{p.name}</span>
-                <span className="eyebrow text-[0.6875rem] text-stone">
-                  {p.accent}
-                </span>
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div className="mt-10 grid gap-px border border-line bg-line md:grid-cols-2">
+          <div className="bg-ink p-8">
+            <h3 className="eyebrow text-stone">Quenori owns</h3>
+            <p className="mt-4 leading-relaxed text-mist">
+              The wordmark, Ink, Paper and the leaf accent, and the frame every
+              product is presented in: hairlines, Fraunces for names, Geist
+              Mono for status.
+            </p>
+          </div>
+          <div className="bg-ink p-8">
+            <h3 className="eyebrow text-stone">Products own</h3>
+            <p className="mt-4 leading-relaxed text-mist">
+              Their mark, colours and typefaces. Quenori never recolours a
+              product or gives it a tree. Inside the frame, each product
+              appears exactly as it does on its own site.
+            </p>
+            <ul className="mt-6 flex flex-wrap gap-3">
+              {products
+                .filter(p => p.identity)
+                .map(p => (
+                  <li
+                    key={p.slug}
+                    className="flex items-center gap-3 px-4 py-3"
+                    style={{
+                      background: p.identity!.background,
+                      color: p.identity!.foreground,
+                    }}
+                  >
+                    <Image src={p.identity!.mark} alt="" width={22} height={22} unoptimized />
+                    <span style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}>{p.name}</span>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
       </Section>
 
       {/* 07 Type */}

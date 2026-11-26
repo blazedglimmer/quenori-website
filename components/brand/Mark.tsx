@@ -1,8 +1,6 @@
-import { glyphs, MARK } from "@/lib/brand/glyphs";
+import { MARK } from "@/lib/brand/glyphs";
 
-const tree = glyphs[0];
-
-/** Compact brand mark — the q drawn as a tree. Works from 16px up. */
+/** Compact brand mark — the crowned q, drawn for small sizes. Works from 16px up. */
 export function Mark({
   className,
   title = "Quenori",
@@ -25,10 +23,10 @@ export function Mark({
       strokeLinejoin="round"
     >
       {tile && (
-        <rect x="-30" y="-24" width="174" height="174" rx="22" fill="var(--color-ink)" stroke="none" />
+        <rect x="-36" y="-52" width="190" height="190" rx="30" fill="var(--color-ink)" stroke="none" />
       )}
       <g stroke={tile ? "var(--color-paper)" : undefined}>
-        {tree.strokes.map((s, i) => (
+        {MARK.strokes.map((s, i) => (
           <path key={i} d={s.d} strokeWidth={s.weight === "growth" ? MARK.growth : MARK.structure} />
         ))}
       </g>

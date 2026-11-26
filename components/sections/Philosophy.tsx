@@ -23,8 +23,8 @@ const rootlets = [
 function crown() {
   // Live products + one open branch for what comes next.
   const nodes = [
-    ...products.map((p) => ({ key: p.slug, label: p.name, accent: p.accent, future: false })),
-    { key: "next", label: "Next idea", accent: "var(--color-stone)", future: true },
+    ...products.map((p) => ({ key: p.slug, label: p.name, live: p.status === "live", future: false })),
+    { key: "next", label: "Next idea", live: false, future: true },
   ];
   const n = nodes.length;
   const span = Math.min(820, 190 * (n - 1));
@@ -48,16 +48,15 @@ export function Philosophy() {
       aria-labelledby="philosophy-title"
       className="scroll-mt-16 border-t border-line bg-bark"
     >
-      <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
+      <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32">
         <Reveal>
           <SectionHeading
-            index="02"
+            align="center"
             label="Philosophy"
             id="philosophy-title"
             title={
               <>
-                Different ideas. <br />
-                Different products. <br />
+                Different ideas. Different products. <br />
                 <em className="text-lichen">One vision.</em>
               </>
             }
@@ -124,11 +123,13 @@ export function Philosophy() {
                   <g key={n.key} className="grow-node" style={{ "--d": 500 + i * 140 } as React.CSSProperties}>
                     {n.future ? (
                       <circle cx={n.x} cy={n.y} r="6" stroke="var(--color-stone)" strokeWidth="1.4" />
-                    ) : (
+                    ) : n.live ? (
                       <>
-                        <circle cx={n.x} cy={n.y} r="14" stroke={n.accent} strokeOpacity="0.35" strokeWidth="1" />
-                        <circle cx={n.x} cy={n.y} r="6.5" fill={n.accent} />
+                        <circle cx={n.x} cy={n.y} r="15" stroke="var(--color-paper)" strokeOpacity="0.3" strokeWidth="1" />
+                        <circle cx={n.x} cy={n.y} r="7" fill="var(--color-paper)" />
                       </>
+                    ) : (
+                      <circle cx={n.x} cy={n.y} r="6.5" fill="var(--color-bark)" stroke="var(--color-mist)" strokeWidth="1.6" />
                     )}
                   </g>
                 ))}
@@ -139,14 +140,14 @@ export function Philosophy() {
               {nodes.map((n) => (
                 <span
                   key={n.key}
-                  className={`eyebrow absolute w-24 -translate-x-1/2 -translate-y-full pb-4 text-center text-[0.625rem] leading-snug sm:text-[0.6875rem] ${n.future ? "text-stone" : "text-mist"}`}
+                  className={`absolute w-16 -translate-x-1/2 -translate-y-full pb-3 text-center text-xs leading-tight sm:w-28 sm:pb-4 sm:text-sm ${n.future ? "text-stone" : n.live ? "text-paper" : "text-mist"}`}
                   style={{ left: pct(n.x, W), top: pct(n.y, H) }}
                 >
                   {n.label}
                 </span>
               ))}
               <span
-                className="eyebrow absolute -translate-y-full pb-2 text-[0.625rem] text-lichen sm:text-[0.6875rem]"
+                className="eyebrow absolute -translate-y-full pb-2 text-[0.6875rem] text-lichen"
                 style={{ left: pct(508, W), top: pct(GROUND, H) }}
               >
                 Quenori
@@ -154,7 +155,7 @@ export function Philosophy() {
               {roots.map((r) => (
                 <span
                   key={r.label}
-                  className="eyebrow absolute w-24 -translate-x-1/2 pt-3 text-center text-[0.625rem] leading-snug text-stone sm:w-auto sm:whitespace-nowrap sm:text-[0.6875rem]"
+                  className="absolute w-20 -translate-x-1/2 pt-3 text-center text-xs leading-tight text-stone sm:w-auto sm:text-sm sm:whitespace-nowrap"
                   style={{ left: pct(r.x, W), top: pct(r.y, H) }}
                 >
                   {r.label}
@@ -169,7 +170,7 @@ export function Philosophy() {
           </figure>
         </Reveal>
 
-        <div className="mt-20 grid gap-12 border-t border-line pt-12 sm:mt-28 md:grid-cols-3 md:gap-10">
+        <div className="mx-auto mt-20 grid max-w-5xl gap-12 border-t border-line pt-12 sm:mt-24 md:grid-cols-3 md:gap-10">
           {[
             {
               title: "Different ideas.",
