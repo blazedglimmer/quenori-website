@@ -4,7 +4,7 @@
  * Every glyph is drawn on the same grid:
  *   x-height  y = 0
  *   baseline  y = 100
- *   ascender  y ≈ -45   (the q's crown, the wing and the leaf reach into this zone)
+ *   ascender  y ≈ -46   (the q's crown, the wing and the leaf reach into this zone)
  *   descender y ≈ 148   (only the roots of the q)
  *
  * Two stroke weights make up the whole system:
@@ -37,6 +37,10 @@ export type GlyphFill = {
   /** Anchor position in the glyph's local coordinates. */
   at: [number, number];
   rotate: number;
+  /** "leaf" (default) takes the accent colour; "ink" always takes the letter colour. */
+  tone?: "leaf" | "ink";
+  /** Dropped from the simplified wordmark, like detail strokes. */
+  detail?: boolean;
 };
 
 export type Glyph = {
@@ -104,21 +108,29 @@ export const glyphs: Glyph[] = [
   {
     char: "e",
     nature: "Snail",
-    note: "The bowl is the shell, with a spiral in its eye; the tail runs on as the foot and lifts at its end.",
-    advance: 98,
+    note: "The bowl is the shell and its whorl grows out of the crossbar; the tail runs on as the foot, lifts into a head, and carries two eye stalks leaning forward.",
+    advance: 114,
     strokes: [
-      // Crossbar + shell + foot, one gesture.
+      // Crossbar + shell + foot + head, one gesture.
       {
-        d: "M9 50L77 50C80 50 81 47.5 81 44C81 18 64 0 44 0C20 0 5 22 5 51C5 81 24 100 49 100L86 100C94 100 99 96 102 88",
+        d: "M9 50L77 50C80 50 81 47.5 81 44C81 18 64 0 44 0C20 0 5 22 5 51C5 81 24 100 49 100L88 100C96 100 101 97 104 90",
         weight: "structure",
         w: 0.98,
       },
-      // Shell spiral inside the eye.
+      // Shell whorl, growing out of the crossbar.
       {
-        d: "M46 37C39 37 36 31 39 26C43 21 52 22 55 29C58 36 54 43 46 44",
+        d: "M31 50C29 35 39 26 50 26C59 26 64 32 63 39C62 45 57 48 52 47C47 46 45 42 46 38C47 35 50 34 52 35",
         weight: "growth",
         detail: true,
       },
+      // Eye stalks: both lean forward, so they read as a snail, not a "y".
+      { d: "M104 90C104 82 106 75 109 70", weight: "growth", detail: true },
+      { d: "M104 90C108 84 113 80 119 78", weight: "growth", w: 0.9, detail: true },
+    ],
+    fills: [
+      // Eyes at the tips of the stalks.
+      { d: "M0 0m-3.2 0a3.2 3.2 0 1 0 6.4 0a3.2 3.2 0 1 0 -6.4 0", at: [109, 70], rotate: 0, tone: "ink", detail: true },
+      { d: "M0 0m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", at: [119, 78], rotate: 0, tone: "ink", detail: true },
     ],
   },
   {
@@ -181,16 +193,21 @@ export const glyphs: Glyph[] = [
   },
   {
     char: "i",
-    nature: "Leaf",
-    note: "A plain stem, slightly bent by its own weight. The tittle is a small leaf, set at an angle; it reads as a dot first and a leaf second.",
-    advance: 36,
-    strokes: [{ d: "M15 6C13 38 15 72 14 100", weight: "structure", w: 1.06 }],
+    nature: "Leaf & branch",
+    note: "The stem is a branch, slightly bent by its own weight; it carries on as a fine stalk into a leaf with its midrib cut through.",
+    advance: 38,
+    strokes: [
+      { d: "M15 6C13 38 15 72 14 100", weight: "structure", w: 1.06 },
+      // Stalk: the branch continuing into the leaf.
+      { d: "M15 6C15 -2 17 -8 21 -13", weight: "growth", detail: true },
+    ],
     fills: [
       {
-        // Small lens-shaped leaf, base at origin, tip up.
-        d: "M0 0C8 -5 9 -18 0 -28C-9 -18 -8 -5 0 0Z",
-        at: [17, -13],
-        rotate: 34,
+        // Leaf with its central vein cut through (even-odd), base at origin,
+        // tip up. Sized so its tip stays level with the top of the crown.
+        d: "M0 0C12 -6 13.5 -24 0 -37C-13.5 -24 -12 -6 0 0ZM0 -6C1.4 -14.5 1.4 -23.5 0 -30.5C-1.4 -23.5 -1.4 -14.5 0 -6Z",
+        at: [21, -13],
+        rotate: 28,
       },
     ],
   },
@@ -210,7 +227,7 @@ export function wordmarkWidth(tracking = TRACKING) {
 /** Grid-space bounds of the full wordmark (crown, wing, leaf and roots included). */
 export function wordmarkBounds(tracking = TRACKING) {
   const left = -16;
-  const top = -50;
+  const top = -52;
   const right = wordmarkWidth(tracking) + 12;
   const bottom = 150;
   return { left, top, width: right - left, height: bottom - top };

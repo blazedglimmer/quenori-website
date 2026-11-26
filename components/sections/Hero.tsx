@@ -38,15 +38,24 @@ export function Hero() {
             {/* Sketch-style annotations: what each letter grows from. */}
             <ol
               aria-label="The letterforms"
-              className="relative mt-3 hidden h-14 border-t border-line md:block"
+              className="relative mt-3 hidden h-[4.75rem] border-t border-line lg:block"
             >
-              {annotations().map((a, i) => (
+              {annotations().map((a, i, all) => (
                 <li
                   key={a.char}
-                  className="absolute top-0 flex -translate-x-1/2 flex-col items-center"
+                  // The last label sits on its own third row and ends at its tick, so it
+                  // never runs past the wordmark or into its neighbours.
+                  className={`absolute top-0 flex flex-col ${
+                    i === all.length - 1 ? "-translate-x-full items-end" : "-translate-x-1/2 items-center"
+                  }`}
                   style={{ left: `${a.left}%` }}
                 >
-                  <span aria-hidden className={`block w-px bg-line ${i % 2 ? "h-6" : "h-2.5"}`} />
+                  <span
+                    aria-hidden
+                    className={`block w-px bg-line ${
+                      i === all.length - 1 ? "h-[2.4rem]" : i % 2 ? "h-6" : "h-2.5"
+                    }`}
+                  />
                   <span className="eyebrow mt-1.5 text-[0.6875rem] whitespace-nowrap text-stone">
                     <span className="text-mist normal-case">{a.char}</span> — {a.nature}
                   </span>

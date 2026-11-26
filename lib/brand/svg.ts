@@ -5,6 +5,10 @@
  */
 import { glyphs, layoutGlyphs, MARK, strokeWidth, wordmarkViewBox, type Glyph } from "./glyphs.ts";
 
+/** Escapes text for use inside SVG/XML elements. */
+const xml = (text: string) =>
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
 export const BRAND_COLORS = {
   ink: "#12130f",
   paper: "#eeebe3",
@@ -39,9 +43,10 @@ export function wordmarkSvg({
         )
         .join("");
       const fills = (glyph.fills ?? [])
+        .filter((f) => !(simplified && f.detail))
         .map(
           (f) =>
-            `<path d="${f.d}" transform="translate(${f.at[0]} ${f.at[1]}) rotate(${f.rotate})" fill="${leaf}" fill-rule="evenodd" stroke="none"/>`,
+            `<path d="${f.d}" transform="translate(${f.at[0]} ${f.at[1]}) rotate(${f.rotate})" fill="${f.tone === "ink" ? color : leaf}" fill-rule="evenodd" stroke="none"/>`,
         )
         .join("");
       return `<g transform="translate(${gx} 0)">${strokes}${fills}</g>`;
@@ -84,7 +89,7 @@ export function letterSvg(
   const tx = -16 + (width - glyph.advance) / 2;
   const strokes = glyph.strokes.map((s) => `<path d="${s.d}" stroke-width="${strokeWidth(s)}"/>`).join("");
   const fills = (glyph.fills ?? [])
-    .map((f) => `<path d="${f.d}" transform="translate(${f.at[0]} ${f.at[1]}) rotate(${f.rotate})" fill="${leaf}" fill-rule="evenodd" stroke="none"/>`)
+    .map((f) => `<path d="${f.d}" transform="translate(${f.at[0]} ${f.at[1]}) rotate(${f.rotate})" fill="${f.tone === "ink" ? color : leaf}" fill-rule="evenodd" stroke="none"/>`)
     .join("");
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16 -56 ${width} 212" width="${width}" height="212" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round"><title>${glyph.char} — ${glyph.nature}</title><g transform="translate(${tx} 0)">${strokes}${fills}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16 -56 ${width} 212" width="${width}" height="212" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round"><title>${xml(`${glyph.char} — ${glyph.nature}`)}</title><g transform="translate(${tx} 0)">${strokes}${fills}</g></svg>`;
 }

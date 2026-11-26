@@ -81,19 +81,26 @@ export function GlyphPaths({
             strokeWidth={strokeWidth(s, simplified) * strokeScale}
           />
         ))}
-      {glyph.fills?.map((f, i) => (
-        <g key={i} transform={`translate(${f.at[0]} ${f.at[1]})`}>
-          <g className="qn-leaf">
-            <path
-              d={f.d}
-              transform={`rotate(${f.rotate})`}
-              fill={accentLeaf ? "var(--color-leaf, currentColor)" : "currentColor"}
-              fillRule="evenodd"
-              stroke="none"
-            />
-          </g>
-        </g>
-      ))}
+      {glyph.fills
+        ?.filter((f) => !(simplified && f.detail))
+        .map((f, i) => {
+          const ink = f.tone === "ink";
+          return (
+            <g key={i} transform={`translate(${f.at[0]} ${f.at[1]})`}>
+              <g className={ink ? "qn-eye" : "qn-leaf"}>
+                <path
+                  d={f.d}
+                  transform={`rotate(${f.rotate})`}
+                  fill={
+                    !ink && accentLeaf ? "var(--color-leaf, currentColor)" : "currentColor"
+                  }
+                  fillRule="evenodd"
+                  stroke="none"
+                />
+              </g>
+            </g>
+          );
+        })}
     </g>
   );
 }
