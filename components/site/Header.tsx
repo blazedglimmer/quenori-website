@@ -72,16 +72,6 @@ export function Header() {
                 </Link>
               </li>
             ))}
-            {site.contactEmail && (
-              <li>
-                <a
-                  href={`mailto:${site.contactEmail}`}
-                  className="text-paper underline decoration-line underline-offset-[6px] transition-colors hover:decoration-lichen"
-                >
-                  Contact
-                </a>
-              </li>
-            )}
           </ul>
         </nav>
 
@@ -115,13 +105,6 @@ export function Header() {
               </Link>
             </li>
           ))}
-          {site.contactEmail && (
-            <li className="border-b border-line">
-              <a href={`mailto:${site.contactEmail}`} className="block py-4 font-display text-3xl">
-                Contact
-              </a>
-            </li>
-          )}
         </ul>
       </nav>
     </header>

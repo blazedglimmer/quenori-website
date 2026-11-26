@@ -74,11 +74,6 @@ export function Footer() {
               </li>
             ))}
             <li>
-              <Link href="/brand" className="hover:text-paper">
-                Brand guidelines
-              </Link>
-            </li>
-            <li>
               <Link href="/privacy" className="hover:text-paper">
                 Privacy Policy
               </Link>
