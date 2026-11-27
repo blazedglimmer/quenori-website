@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isIndexable, type PagePath } from "@/lib/pages";
 import { site } from "@/lib/site";
 
 const defaultTitle = `${site.name} — ${site.tagline}`;
@@ -23,13 +24,17 @@ const socialImage = {
  * would otherwise inherit the root layout's `openGraph` and `twitter` objects,
  * with the homepage's URL and title. Paths are resolved against `metadataBase`
  * (site.url) in the root layout.
+ *
+ * Indexing follows lib/pages.ts: non-indexable pages get `noindex, follow`
+ * (still crawlable, links still followed, canonical unchanged). Nothing else
+ * sets `robots`, so there is never a conflicting tag.
  */
 export function pageMetadata({
   path,
   title,
   description = site.description,
 }: {
-  path: `/${string}`;
+  path: PagePath;
   title?: string;
   description?: string;
 }): Metadata {
@@ -37,6 +42,7 @@ export function pageMetadata({
   return {
     ...(title ? { title } : {}),
     description,
+    ...(isIndexable(path) ? {} : { robots: { index: false, follow: true } }),
     alternates: { canonical: path },
     openGraph: {
       type: "website",
