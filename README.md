@@ -55,4 +55,4 @@ Publish each document only when its text is final; the two flags are independent
 - Confirm `contactEmail` in `lib/site.ts` receives mail (set it to `null` to hide every contact link).
 - Add verified social URLs to `site.social` (the section stays hidden while it's empty).
 - Replace the placeholder Privacy Policy and Terms of Service pages, then make them indexable (see [Publishing the legal pages](#publishing-the-legal-pages)).
-- Fill in Prices, Gameplay and AI Coding Agent details in `lib/products.ts`.
+- Fill in Prices, Countries and AI Coding Agent details in `lib/products.ts`.
