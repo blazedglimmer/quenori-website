@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono, Newsreader } from "next/font/google";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -31,27 +32,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  ...pageMetadata({ path: "/" }),
   metadataBase: new URL(site.url),
   title: {
     default: `${site.name} — ${site.tagline}`,
     template: `%s — ${site.name}`,
   },
-  description: site.description,
   applicationName: site.name,
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    siteName: site.name,
-    url: site.url,
-    title: `${site.name} — ${site.tagline}`,
-    description: site.description,
-    locale: "en",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${site.name} — ${site.tagline}`,
-    description: site.description,
-  },
 };
 
 export const viewport: Viewport = {
